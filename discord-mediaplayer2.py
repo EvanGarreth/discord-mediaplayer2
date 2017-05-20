@@ -4,7 +4,7 @@ import asyncio, dbus, discord
 SECONDS_BETWEEN_CHECKS = 10
 # In the discord client, hold ctrl+shift+i and look for the token value in Local Storage under the Application tab
 CLIENT_TOKEN = "REPLACE_THIS"
-# The MediaPlayer2 service name. Can be changed to any MediaPlayer2 compatible platform (ex: Rythmbox, VLC, Spotfiy)
+# The desired MediaPlayer2 service name. Can be changed to any MediaPlayer2 compatible application (ex: Rythmbox, VLC, Spotfiy)
 SERVICE = "org.mpris.MediaPlayer2.spotify"
 
 client = discord.Client()
@@ -41,8 +41,9 @@ async def updateUserGame(newGame):
 
 def createGame():
     metaData = playerInterface.Get("org.mpris.MediaPlayer2.Player", "Metadata")
-    status = "♪ {} - {}".format(metaData["xesam:title"], metaData["xesam:artist"][0])
-    return discord.Game(name=status)
+    if metaData: # metaData is None when spotify is started up w/o hitting play
+        status = "♪ {} - {}".format(metaData["xesam:title"], metaData["xesam:artist"][0])
+        return discord.Game(name=status)
 
 def displayUserInfo():
     print('Logged in as')
